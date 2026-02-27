@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Hail Mary — A Tribute</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:   #f5c842;
+      --blue:   #4fc3f7;
+      --teal:   #26c6da;
+      --purple: #7c4dff;
+      --dim:    #b0bec5;
+      --bg:     #060a10;
+      --card:   rgba(255,255,255,0.04);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: #e0e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── Star field ───────────────────────────────────────── */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── Layout helpers ────────────────────────────────────── */
+    section { position: relative; z-index: 1; }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ─── Nav ───────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(6,10,16,0.72);
+      border-bottom: 1px solid rgba(79,195,247,0.15);
+    }
+
+    nav .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+    }
+
+    nav .brand {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.75rem;
+    }
+
+    nav a {
+      color: var(--dim);
+      text-decoration: none;
+      font-size: 0.88rem;
+      letter-spacing: 0.05em;
+      transition: color .2s;
+    }
+
+    nav a:hover { color: var(--blue); }
+
+    /* ─── Hero ──────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 1.5rem 5rem;
+    }
+
+    .hero-inner { max-width: 780px; }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(38,198,218,0.35);
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 30%, var(--gold) 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--dim);
+      margin-bottom: 2.25rem;
+    }
+
+    .hero-subtitle em {
+      color: var(--gold);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      border-radius: 3rem;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(79,195,247,0.35);
+    }
+
+    /* pulse ring around hero title */
+    .pulse-ring {
+      position: absolute;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,200,66,0.12);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      animation: pulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .pulse-ring:nth-child(2) { width: 620px; height: 620px; animation-delay: 1.2s; }
+    .pulse-ring:nth-child(3) { width: 820px; height: 820px; animation-delay: 2.4s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.25; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 0.06; transform: translate(-50%,-50%) scale(1.04); }
+    }
+
+    /* ─── Section headers ───────────────────────────────────── */
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .section-lead {
+      color: var(--dim);
+      max-width: 620px;
+      font-size: 1.05rem;
+    }
+
+    /* ─── Book section ──────────────────────────────────────── */
+    #book {
+      padding: 7rem 0;
+      background: linear-gradient(180deg, transparent, rgba(124,77,255,0.05) 50%, transparent);
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 3.5rem;
+    }
+
+    @media (max-width: 700px) {
+      .book-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    .book-cover-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .book-cover {
+      width: 240px;
+      background: linear-gradient(145deg, #1a1a2e, #16213e);
+      border-radius: 6px 16px 16px 6px;
+      box-shadow:
+        -6px 0 0 #000,
+        0 20px 60px rgba(79,195,247,0.25),
+        0 0 0 1px rgba(255,255,255,0.06);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+    }
+
+    .book-cover .cover-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .book-cover .cover-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+
+    .book-cover .cover-author {
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .book-cover .cover-year {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: var(--dim);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 0.75rem;
+    }
+
+    .book-facts { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.75rem; }
+
+    .fact {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 0.75rem;
+      padding: 0.85rem 1rem;
+    }
+
+    .fact-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+    .fact strong {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.15rem;
+    }
+
+    .fact p { font-size: 0.92rem; color: var(--dim); }
+
+    /* ─── Plot ──────────────────────────────────────────────── */
+    #plot {
+      padding: 6rem 0;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 3rem;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--purple), var(--teal), var(--gold));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2.5rem;
+      padding-left: 1.75rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.35rem;
+      top: 0.35rem;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 10px var(--teal);
+    }
+
+    .timeline-item h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-item p { color: var(--dim); font-size: 0.95rem; }
+
+    /* ─── Characters ────────────────────────────────────────── */
+    #characters {
+      padding: 7rem 0;
+      background: linear-gradient(180deg, transparent, rgba(38,198,218,0.04) 50%, transparent);
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .char-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 1.25rem;
+      padding: 2rem 1.75rem;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+
+    .char-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(79,195,247,0.3);
+      box-shadow: 0 12px 40px rgba(79,195,247,0.1);
+    }
+
+    .char-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .char-avatar.human { background: rgba(245,200,66,0.12); }
+    .char-avatar.alien { background: rgba(38,198,218,0.12); }
+
+    .char-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .char-role {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.85rem;
+    }
+
+    .char-desc { color: var(--dim); font-size: 0.92rem; }
+
+    /* ─── Quotes ────────────────────────────────────────────── */
+    #quotes {
+      padding: 6rem 0;
+    }
+
+    .quote-carousel {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .quote-block {
+      background: var(--card);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 1rem 1rem 0;
+      padding: 1.75rem 2rem;
+    }
+
+    .quote-text {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #d0dce8;
+      margin-bottom: 0.75rem;
+      line-height: 1.65;
+    }
+
+    .quote-attr {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    /* ─── Movie ─────────────────────────────────────────────── */
+    #movie {
+      padding: 7rem 0;
+      background: linear-gradient(180deg, transparent, rgba(124,77,255,0.06) 50%, transparent);
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 3.5rem;
+    }
+
+    @media (max-width: 700px) {
+      .movie-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .movie-poster { order: -1; }
+    }
+
+    .movie-poster {
+      display: flex;
+      justify-content: center;
+    }
+
+    .poster-card {
+      width: 240px;
+      background: linear-gradient(160deg, #0d1b2a, #1a1a2e);
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(124,77,255,0.3), 0 0 0 1px rgba(255,255,255,0.06);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poster-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(124,77,255,0.18) 0%, transparent 70%);
+    }
+
+    .poster-card .cover-icon { position: relative; z-index: 1; }
+    .poster-card .cover-title { position: relative; z-index: 1; }
+    .poster-card .cover-year { position: relative; z-index: 1; }
+
+    .poster-card .streaming-badge {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #00a8e0, #0066cc);
+      padding: 0.3rem 0.75rem;
+      border-radius: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .movie-details { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.75rem; }
+
+    /* ─── Astrophage Science box ────────────────────────────── */
+    #science {
+      padding: 6rem 0;
+    }
+
+    .science-box {
+      background: linear-gradient(135deg, rgba(124,77,255,0.08), rgba(38,198,218,0.08));
+      border: 1px solid rgba(124,77,255,0.2);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      margin-top: 3rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .sci-item { text-align: center; }
+
+    .sci-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    .sci-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.4rem;
+    }
+
+    .sci-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    .sci-desc { font-size: 0.85rem; color: var(--dim); }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer p { color: var(--dim); font-size: 0.85rem; }
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Astrophage animation strip ───────────────────────── */
+    .astrophage-bar {
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg,
+        var(--gold) 0%,
+        var(--teal) 25%,
+        var(--purple) 50%,
+        var(--teal) 75%,
+        var(--gold) 100%);
+      background-size: 200% 100%;
+      animation: barSlide 3s linear infinite;
+    }
+
+    @keyframes barSlide {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ─── Fade-in on scroll ─────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Star field canvas -->
+<canvas id="starfield"></canvas>
+
+<!-- Navigation -->
+<nav>
+  <div class="inner">
+    <a href="#hero" class="brand">Project Hail Mary</a>
+    <ul>
+      <li><a href="#book">Book</a></li>
+      <li><a href="#plot">Story</a></li>
+      <li><a href="#characters">Characters</a></li>
+      <li><a href="#movie">Movie</a></li>
+      <li><a href="#science">Science</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring"></div>
+
+  <div class="hero-inner">
+    <span class="hero-eyebrow">A Tribute to</span>
+    <h1 class="hero-title">Project Hail Mary</h1>
+    <p class="hero-subtitle">
+      One man. One ship. One last chance to save <em>everything</em>.<br>
+      The novel by <em>Andy Weir</em> &amp; the motion picture from Amazon MGM Studios.
+    </p>
+    <a href="#book" class="hero-cta">Explore the Mission</a>
+  </div>
+</section>
+
+<!-- ── BOOK ─────────────────────────────────────────────────── -->
+<section id="book">
+  <div class="container">
+    <p class="section-label reveal">The Novel</p>
+    <h2 class="section-title reveal">Andy Weir's Masterpiece</h2>
+    <p class="section-lead reveal">
+      Published in May 2021, <em>Project Hail Mary</em> soared to the top of the
+      New York Times bestseller list and cemented Andy Weir as one of the great
+      science-fiction storytellers of our era.
+    </p>
+
+    <div class="book-grid">
+      <div class="book-cover-wrap reveal">
+        <div class="book-cover">
+          <span class="cover-icon">🌌</span>
+          <div class="cover-title">PROJECT<br>HAIL MARY</div>
+          <div class="cover-author">Andy Weir</div>
+          <div class="cover-year">Ballantine Books · May 4, 2021<br>476 pages</div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p style="color: var(--dim); margin-bottom: 1.5rem;">
+          When all of humanity needs saving, a lone astronaut wakes up millions of
+          miles from Earth with no memory of who he is or how he got there. What he
+          discovers will change the fate of two civilizations.
+        </p>
+        <div class="book-facts">
+          <div class="fact">
+            <span class="fact-icon">🏆</span>
+            <div>
+              <strong>Awards</strong>
+              <p>Hugo Award finalist; Goodreads Choice Award for Science Fiction (2021)</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">📚</span>
+            <div>
+              <strong>Author</strong>
+              <p>Andy Weir — also wrote <em>The Martian</em> (2011) and <em>Artemis</em> (2017)</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">🌍</span>
+            <div>
+              <strong>Setting</strong>
+              <p>Earth, near-future solar system, and the Tau Ceti star system ~12 light-years away</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">⭐</span>
+            <div>
+              <strong>Reception</strong>
+              <p>4.52 / 5 on Goodreads from over 1 million ratings — one of the highest-rated sci-fi novels of the decade</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PLOT ──────────────────────────────────────────────────── -->
+<section id="plot">
+  <div class="container">
+    <p class="section-label reveal">The Story</p>
+    <h2 class="section-title reveal">A Race Against Extinction</h2>
+    <p class="section-lead reveal">
+      A riveting, spoiler-light journey through the most ambitious solo mission
+      humanity has ever launched.
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <h3>The Sun Is Dimming</h3>
+        <p>Scientists detect that the Sun is losing luminosity at an alarming rate. The culprit: <em>Astrophage</em>, a single-celled photosynthetic organism that feeds directly on stellar energy. Earth has perhaps thirty years before an ice age ends civilization.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <h3>The Hail Mary Mission</h3>
+        <p>One star — <em>Tau Ceti</em>, 12 light-years away — shows no dimming. Humanity's last hope is to send a small crew there to discover why, then bring the answer back. The mission is a one-way trip for its crew.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <h3>A Man Wakes Up Alone</h3>
+        <p>Ryland Grace regains consciousness aboard the Hail Mary with no memory. His two crewmates are dead. Piecing together fragments of memory, he slowly reconstructs who he is, why he is the only one left, and what he must do.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <h3>First Contact</h3>
+        <p>Grace discovers he is not alone in the Tau Ceti system. An alien spacecraft from the planet Erid is conducting the same investigation. Against all odds, he establishes communication with the Eridian he calls <em>Rocky</em> — changing everything.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <h3>Two Worlds, One Problem</h3>
+        <p>Working across species, language barriers, and wildly different biologies, Grace and Rocky pool their science to understand Astrophage. Their unlikely friendship becomes the story's beating heart.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <h3>The Choice</h3>
+        <p>With a solution in hand, Grace must make an impossible decision — one that defines what it truly means to be human, and to be alive in an indifferent universe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHARACTERS ────────────────────────────────────────────── -->
+<section id="characters">
+  <div class="container">
+    <p class="section-label reveal">The Characters</p>
+    <h2 class="section-title reveal">Crew & Companions</h2>
+    <p class="section-lead reveal">
+      Two beings from different stars, united by science — and something more.
+    </p>
+
+    <div class="char-grid">
+      <div class="char-card reveal">
+        <div class="char-avatar human">🧑‍🔬</div>
+        <div class="char-name">Ryland Grace</div>
+        <div class="char-role">Protagonist · Astronaut & Scientist</div>
+        <p class="char-desc">
+          A junior high school science teacher turned reluctant hero. Grace's boundless
+          curiosity, self-deprecating humor, and deep love of science carry the reader
+          across the void. His amnesia-driven self-discovery is one of fiction's great
+          narrative engines.
+        </p>
+      </div>
+
+      <div class="char-card reveal">
+        <div class="char-avatar alien">🪐</div>
+        <div class="char-name">Rocky</div>
+        <div class="char-role">Eridian · Engineer & First Contact</div>
+        <p class="char-desc">
+          An ammonium-breathing, five-limbed creature from a high-gravity world who
+          communicates through musical tones. Rocky is one of science fiction's most
+          beloved alien characters — curious, loyal, and every bit as funny as his
+          human counterpart.
+        </p>
+      </div>
+
+      <div class="char-card reveal">
+        <div class="char-avatar human">👩‍⚕️</div>
+        <div class="char-name">Eva Stratt</div>
+        <div class="char-role">Mission Commander · Earth</div>
+        <p class="char-desc">
+          The cold, pragmatic European official granted unprecedented authority over
+          every nation on Earth. She makes the ruthless decisions no one else will.
+          Without her, the Hail Mary never launches.
+        </p>
+      </div>
+
+      <div class="char-card reveal">
+        <div class="char-avatar alien">🌟</div>
+        <div class="char-name">Astrophage</div>
+        <div class="char-role">Organism · The Existential Threat</div>
+        <p class="char-desc">
+          A microscopic, single-celled life form that photosynthesizes stellar
+          radiation and reproduces at an exponential rate. Part villain, part miracle
+          of biology — Astrophage blurs the line between catastrophe and wonder.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTES ────────────────────────────────────────────────── -->
+<section id="quotes">
+  <div class="container">
+    <p class="section-label reveal">Memorable Lines</p>
+    <h2 class="section-title reveal">Words from the Stars</h2>
+
+    <div class="quote-carousel">
+      <div class="quote-block reveal">
+        <p class="quote-text">"I am the last astronaut. The last hope of humanity. And I have absolutely no idea what I'm doing."</p>
+        <span class="quote-attr">— Ryland Grace</span>
+      </div>
+      <div class="quote-block reveal">
+        <p class="quote-text">"If the human race is going to be done in by an organism with a two-carbon-atom metabolism, we have no business being the dominant species on this planet."</p>
+        <span class="quote-attr">— Ryland Grace</span>
+      </div>
+      <div class="quote-block reveal">
+        <p class="quote-text">"Science is my language. I speak it fluently, but I didn't know I was bilingual until Rocky showed me."</p>
+        <span class="quote-attr">— Ryland Grace</span>
+      </div>
+      <div class="quote-block reveal">
+        <p class="quote-text">"You save world. I save world. Maybe we both get good sleep after."</p>
+        <span class="quote-attr">— Rocky (translated)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MOVIE ─────────────────────────────────────────────────── -->
+<section id="movie">
+  <div class="container">
+    <p class="section-label reveal">The Film Adaptation</p>
+    <h2 class="section-title reveal">Coming to the Big Screen</h2>
+    <p class="section-lead reveal">
+      Amazon MGM Studios is bringing the story to life with an all-star cast and
+      production team dedicated to honoring Andy Weir's vision.
+    </p>
+
+    <div class="movie-grid">
+      <div class="reveal">
+        <div class="movie-details">
+          <div class="fact">
+            <span class="fact-icon">🎬</span>
+            <div>
+              <strong>Director</strong>
+              <p>Phil Lord &amp; Christopher Miller (<em>The Lego Movie</em>, <em>Spider-Man: Into the Spider-Verse</em>)</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">⭐</span>
+            <div>
+              <strong>Starring</strong>
+              <p>Ryan Gosling as Ryland Grace — a casting choice celebrated by fans worldwide</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">🏢</span>
+            <div>
+              <strong>Studio</strong>
+              <p>Amazon MGM Studios, produced by Drew Goddard</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">🎭</span>
+            <div>
+              <strong>Screenplay</strong>
+              <p>Drew Goddard, working closely with Andy Weir to preserve the novel's scientific heart and emotional core</p>
+            </div>
+          </div>
+          <div class="fact">
+            <span class="fact-icon">🌠</span>
+            <div>
+              <strong>Production Note</strong>
+              <p>Filmmakers face the beloved challenge of bringing Rocky to life — one of sci-fi's most cherished alien characters — with groundbreaking visual effects</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="movie-poster reveal">
+        <div class="poster-card">
+          <span class="cover-icon" style="font-size:3.5rem; display:block; margin-bottom:1rem; position:relative; z-index:1;">🎥</span>
+          <div class="cover-title" style="position:relative;z-index:1;font-size:1.1rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:0.4rem;">PROJECT<br>HAIL MARY</div>
+          <div style="font-size:0.8rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;position:relative;z-index:1;">Ryan Gosling</div>
+          <div style="margin-top:0.3rem;font-size:0.7rem;color:var(--dim);position:relative;z-index:1;">Lord &amp; Miller · Amazon MGM</div>
+          <span class="streaming-badge">Amazon Prime Video</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCIENCE ────────────────────────────────────────────────── -->
+<section id="science">
+  <div class="container">
+    <p class="section-label reveal">The Science</p>
+    <h2 class="section-title reveal">Real Physics, Imagined Biology</h2>
+    <p class="section-lead reveal">
+      Andy Weir built <em>Project Hail Mary</em> on a bedrock of real science —
+      then let one extraordinary fictional organism break everything we know.
+    </p>
+
+    <div class="science-box reveal">
+      <div class="sci-item">
+        <div class="sci-icon">☀️</div>
+        <div class="sci-title">Distance to Tau Ceti</div>
+        <div class="sci-value">11.9 ly</div>
+        <div class="sci-desc">A real star in Cetus, host to confirmed exoplanets</div>
+      </div>
+      <div class="sci-item">
+        <div class="sci-icon">⚡</div>
+        <div class="sci-title">Astrophage Fuel</div>
+        <div class="sci-value">0.14c</div>
+        <div class="sci-desc">Ship velocity — 14% the speed of light using Astrophage drive</div>
+      </div>
+      <div class="sci-item">
+        <div class="sci-icon">🔬</div>
+        <div class="sci-title">Astrophage Size</div>
+        <div class="sci-value">~10 µm</div>
+        <div class="sci-desc">Microscopic organism, roughly the size of a human cell</div>
+      </div>
+      <div class="sci-item">
+        <div class="sci-icon">🧬</div>
+        <div class="sci-title">Travel Time</div>
+        <div class="sci-value">~4 yrs</div>
+        <div class="sci-desc">One-way journey at 0.14c, accounting for acceleration/deceleration</div>
+      </div>
+      <div class="sci-item">
+        <div class="sci-icon">🌡️</div>
+        <div class="sci-title">Eridian Atmosphere</div>
+        <div class="sci-value">NH₃ + H₂</div>
+        <div class="sci-desc">Rocky breathes ammonium-rich gas at high pressure — toxic to humans</div>
+      </div>
+      <div class="sci-item">
+        <div class="sci-icon">📡</div>
+        <div class="sci-title">Communication Method</div>
+        <div class="sci-value">Tones</div>
+        <div class="sci-desc">Ryland and Rocky develop a shared language built on musical frequencies</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<div class="astrophage-bar"></div>
+<footer>
+  <div class="container">
+    <p style="font-size:1.5rem; margin-bottom:0.75rem;">🌌</p>
+    <p style="color:#fff; font-weight:700; margin-bottom:0.4rem;">Project Hail Mary</p>
+    <p>A fan tribute to the novel by <a href="#">Andy Weir</a> and the Amazon MGM Studios film.</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">
+      All character names, story elements, and intellectual property belong to their respective owners.
+      This is an unofficial, non-commercial tribute created out of love for the story.
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ─── Star field ─────────────────────────────────────── */
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars(n = 320) {
+    stars = Array.from({ length: n }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.2,
+      a: Math.random(),
+      speed: Math.random() * 0.004 + 0.001,
+      phase: Math.random() * Math.PI * 2,
+    }));
+  }
+
+  function drawStars(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const s of stars) {
+      const alpha = s.a * (0.6 + 0.4 * Math.sin(t * s.speed + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.fill();
+    }
+  }
+
+  let raf;
+  function loop(t) {
+    drawStars(t / 1000);
+    raf = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  resize();
+  initStars();
+  requestAnimationFrame(loop);
+
+  /* ─── Scroll reveal ──────────────────────────────────── */
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  /* ─── Nav active link highlight ──────────────────────── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          navLinks.forEach((a) => {
+            a.style.color = a.getAttribute('href') === `#${e.target.id}`
+              ? 'var(--blue)' : '';
+          });
+        }
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  sections.forEach((s) => sectionObserver.observe(s));
+</script>
+</body>
+</html>
