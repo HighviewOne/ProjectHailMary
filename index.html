@@ -396,6 +396,62 @@
 
     .char-desc { color: var(--dim); font-size: 0.92rem; }
 
+    /* ─── Rocky showcase ────────────────────────────────────── */
+    .rocky-showcase {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 3rem;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(38,198,218,0.05), rgba(124,77,255,0.05));
+      border: 1px solid rgba(38,198,218,0.2);
+      border-radius: 1.5rem;
+      padding: 2.5rem 3rem;
+      margin: 3rem 0;
+      overflow: hidden;
+    }
+
+    @media (max-width: 720px) {
+      .rocky-showcase {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+      }
+      .rocky-showcase svg { max-width: 260px; margin: 0 auto; display: block; }
+    }
+
+    .rocky-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .rocky-showcase h3 {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 0.8rem;
+    }
+
+    .rocky-showcase p {
+      color: var(--dim);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.9rem;
+    }
+
+    .rocky-tag {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      background: rgba(38,198,218,0.08);
+      border: 1px solid rgba(38,198,218,0.28);
+      border-radius: 2rem;
+      font-size: 0.73rem;
+      color: var(--teal);
+      letter-spacing: 0.06em;
+      margin: 0 0.3rem 0.4rem 0;
+    }
+
     /* ─── Quotes ────────────────────────────────────────────── */
     #quotes {
       padding: 6rem 0;
@@ -719,6 +775,224 @@
     <p class="section-lead reveal">
       Two beings from different stars, united by science — and something more.
     </p>
+
+    <!-- Rocky illustration -->
+    <div class="rocky-showcase reveal">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fan illustration of Rocky, the five-limbed Eridian from Project Hail Mary">
+        <title>Rocky — Eridian Fan Illustration</title>
+        <defs>
+          <radialGradient id="rk-body" cx="40%" cy="35%">
+            <stop offset="0%" stop-color="#f2b05a"/>
+            <stop offset="55%" stop-color="#c07028"/>
+            <stop offset="100%" stop-color="#6b3510"/>
+          </radialGradient>
+          <radialGradient id="rk-dome" cx="40%" cy="35%">
+            <stop offset="0%" stop-color="#f8cc78"/>
+            <stop offset="60%" stop-color="#d48038"/>
+            <stop offset="100%" stop-color="#9a5018"/>
+          </radialGradient>
+          <linearGradient id="rk-limb" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#b06020"/>
+            <stop offset="50%" stop-color="#d08030"/>
+            <stop offset="100%" stop-color="#985018"/>
+          </linearGradient>
+          <radialGradient id="rk-finger" cx="30%" cy="30%">
+            <stop offset="0%" stop-color="#e8a840"/>
+            <stop offset="100%" stop-color="#7a3a10"/>
+          </radialGradient>
+          <radialGradient id="rk-sensor" cx="35%" cy="35%">
+            <stop offset="0%" stop-color="#40ead0"/>
+            <stop offset="50%" stop-color="#26c6da"/>
+            <stop offset="100%" stop-color="#008899"/>
+          </radialGradient>
+          <radialGradient id="rk-aura" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#26c6da" stop-opacity="0"/>
+            <stop offset="60%" stop-color="#26c6da" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#26c6da" stop-opacity="0.22"/>
+          </radialGradient>
+          <filter id="rk-drop" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="1" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
+          </filter>
+          <filter id="rk-sense-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Outer aura -->
+        <circle cx="250" cy="250" r="240" fill="url(#rk-aura)"/>
+
+        <!-- Tonal communication rings -->
+        <circle cx="250" cy="250" r="175" stroke="#26c6da" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="11 9" fill="none"/>
+        <circle cx="250" cy="250" r="210" stroke="#26c6da" stroke-width="0.5" stroke-opacity="0.14" stroke-dasharray="6 14" fill="none"/>
+
+        <!-- Musical notes — Rocky speaks in tones -->
+        <text x="72"  y="185" font-size="20" fill="#26c6da" fill-opacity="0.42" transform="rotate(-18,72,185)">♪</text>
+        <text x="394" y="318" font-size="16" fill="#26c6da" fill-opacity="0.35" transform="rotate(22,394,318)">♫</text>
+        <text x="305" y="72"  font-size="13" fill="#26c6da" fill-opacity="0.28" transform="rotate(8,305,72)">♩</text>
+        <text x="122" y="415" font-size="18" fill="#26c6da" fill-opacity="0.38" transform="rotate(-12,122,415)">♪</text>
+        <text x="413" y="150" font-size="12" fill="#26c6da" fill-opacity="0.25" transform="rotate(15,413,150)">♫</text>
+
+        <!-- ═══ LIMBS (behind body) — one template rotated 5× ═══ -->
+        <!-- Limb 0 — 0° (top) -->
+        <g transform="rotate(0,250,250)" filter="url(#rk-drop)">
+          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+        </g>
+
+        <!-- Limb 1 — 72° -->
+        <g transform="rotate(72,250,250)" filter="url(#rk-drop)">
+          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+        </g>
+
+        <!-- Limb 2 — 144° -->
+        <g transform="rotate(144,250,250)" filter="url(#rk-drop)">
+          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+        </g>
+
+        <!-- Limb 3 — 216° -->
+        <g transform="rotate(216,250,250)" filter="url(#rk-drop)">
+          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+        </g>
+
+        <!-- Limb 4 — 288° -->
+        <g transform="rotate(288,250,250)" filter="url(#rk-drop)">
+          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+        </g>
+
+        <!-- ═══ CENTRAL BODY (on top of limb bases) ═══ -->
+        <circle cx="250" cy="250" r="74" fill="url(#rk-body)" filter="url(#rk-drop)"/>
+
+        <!-- Carapace scute ridges radiating toward each limb -->
+        <g stroke="#5a2808" stroke-width="1.5" stroke-opacity="0.35" fill="none">
+          <line x1="250" y1="176" x2="250" y2="210"/>
+          <line x1="250" y1="176" x2="250" y2="210" transform="rotate(72,250,250)"/>
+          <line x1="250" y1="176" x2="250" y2="210" transform="rotate(144,250,250)"/>
+          <line x1="250" y1="176" x2="250" y2="210" transform="rotate(216,250,250)"/>
+          <line x1="250" y1="176" x2="250" y2="210" transform="rotate(288,250,250)"/>
+          <!-- Concentric plate rings -->
+          <circle cx="250" cy="250" r="54" stroke-opacity="0.25"/>
+          <circle cx="250" cy="250" r="34" stroke-opacity="0.2"/>
+        </g>
+
+        <!-- Dome highlight (top carapace sheen) -->
+        <ellipse cx="248" cy="244" rx="44" ry="39" fill="url(#rk-dome)" fill-opacity="0.42"/>
+
+        <!-- Surface specular sheen -->
+        <ellipse cx="233" cy="228" rx="25" ry="19" fill="white" fill-opacity="0.07"/>
+
+        <!-- 5 Sensory organs — one per limb direction, r=40 from center -->
+        <!-- S0: 270° → (250, 210) -->
+        <g filter="url(#rk-sense-glow)">
+          <circle cx="250" cy="210" r="7.5" fill="#040c0f"/>
+          <circle cx="250" cy="210" r="5"   fill="url(#rk-sensor)"/>
+          <circle cx="248" cy="208" r="1.8" fill="white" fill-opacity="0.65"/>
+        </g>
+        <!-- S1: 342° → (288, 238) -->
+        <g filter="url(#rk-sense-glow)">
+          <circle cx="288" cy="238" r="7.5" fill="#040c0f"/>
+          <circle cx="288" cy="238" r="5"   fill="url(#rk-sensor)"/>
+          <circle cx="286" cy="236" r="1.8" fill="white" fill-opacity="0.65"/>
+        </g>
+        <!-- S2: 54° → (274, 282) -->
+        <g filter="url(#rk-sense-glow)">
+          <circle cx="274" cy="282" r="7.5" fill="#040c0f"/>
+          <circle cx="274" cy="282" r="5"   fill="url(#rk-sensor)"/>
+          <circle cx="272" cy="280" r="1.8" fill="white" fill-opacity="0.65"/>
+        </g>
+        <!-- S3: 126° → (226, 282) -->
+        <g filter="url(#rk-sense-glow)">
+          <circle cx="226" cy="282" r="7.5" fill="#040c0f"/>
+          <circle cx="226" cy="282" r="5"   fill="url(#rk-sensor)"/>
+          <circle cx="224" cy="280" r="1.8" fill="white" fill-opacity="0.65"/>
+        </g>
+        <!-- S4: 198° → (212, 238) -->
+        <g filter="url(#rk-sense-glow)">
+          <circle cx="212" cy="238" r="7.5" fill="#040c0f"/>
+          <circle cx="212" cy="238" r="5"   fill="url(#rk-sensor)"/>
+          <circle cx="210" cy="236" r="1.8" fill="white" fill-opacity="0.65"/>
+        </g>
+
+        <!-- Tone-producing organ at center -->
+        <ellipse cx="250" cy="256" rx="13" ry="8" fill="#3a1a06"/>
+        <ellipse cx="250" cy="256" rx="9"  ry="5" fill="#18080a"/>
+        <!-- Sound wave -->
+        <path d="M 243,256 Q 246.5,251 250,256 Q 253.5,261 257,256" stroke="#26c6da" stroke-width="1.2" stroke-opacity="0.55" fill="none" stroke-linecap="round"/>
+      </svg>
+
+      <div>
+        <div class="rocky-label">Fan Illustration</div>
+        <h3>Meet Rocky</h3>
+        <p>
+          An Eridian engineer from a world twice Earth's gravity, Rocky breathes
+          ammonium, sees with five teal-glowing sensory organs, and communicates
+          through musical tones produced by a central organ on his carapace.
+        </p>
+        <p>
+          Despite every biological difference imaginable, Rocky's warmth, humor,
+          and fierce loyalty make him one of the most beloved characters in all of
+          science fiction. The friendship at the heart of this story transcends
+          species — and maybe even the universe itself.
+        </p>
+        <div>
+          <span class="rocky-tag">5-Limbed</span>
+          <span class="rocky-tag">Ammonium breather</span>
+          <span class="rocky-tag">Tonal language</span>
+          <span class="rocky-tag">From Erid</span>
+          <span class="rocky-tag">Ship engineer</span>
+          <span class="rocky-tag">Best friend</span>
+        </div>
+      </div>
+    </div>
 
     <div class="char-grid">
       <div class="char-card reveal">
