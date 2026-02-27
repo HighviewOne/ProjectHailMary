@@ -409,6 +409,7 @@
       padding: 2.5rem 3rem;
       margin: 3rem 0;
       overflow: hidden;
+      position: relative;
     }
 
     @media (max-width: 720px) {
@@ -618,6 +619,70 @@
       100% { background-position: -200% 0; }
     }
 
+    /* ─── Rocky voice button ────────────────────────────────── */
+    .rocky-play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 1.4rem;
+      padding: 0.7rem 1.5rem;
+      background: rgba(38,198,218,0.08);
+      border: 1px solid rgba(38,198,218,0.4);
+      border-radius: 2rem;
+      color: var(--teal);
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      cursor: pointer;
+      transition: background .2s, box-shadow .2s, color .2s;
+    }
+
+    .rocky-play-btn:hover {
+      background: rgba(38,198,218,0.16);
+      box-shadow: 0 0 22px rgba(38,198,218,0.22);
+    }
+
+    .rocky-play-btn.playing {
+      color: #fff;
+      background: rgba(38,198,218,0.18);
+      animation: btn-pulse 1.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes btn-pulse {
+      0%, 100% { box-shadow: 0 0 16px rgba(38,198,218,0.3); }
+      50%       { box-shadow: 0 0 36px rgba(38,198,218,0.6); }
+    }
+
+    /* Comm rings animate when Rocky speaks */
+    #rocky-svg.speaking .comm-ring {
+      animation: ring-pulse 1.6s ease-in-out infinite;
+    }
+
+    #rocky-svg.speaking .comm-ring:last-of-type {
+      animation-delay: 0.55s;
+    }
+
+    @keyframes ring-pulse {
+      0%, 100% { stroke-opacity: 0.15; stroke-width: 1; }
+      50%       { stroke-opacity: 0.75; stroke-width: 2; }
+    }
+
+    /* Floating note particles */
+    .rocky-note-particle {
+      position: absolute;
+      font-size: 1.1rem;
+      color: var(--teal);
+      pointer-events: none;
+      animation: note-float 2.2s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes note-float {
+      0%   { opacity: 0.9; transform: translateY(0) scale(1) rotate(0deg); }
+      100% { opacity: 0;   transform: translateY(-90px) scale(0.6) rotate(20deg); }
+    }
+
     /* ─── Fade-in on scroll ─────────────────────────────────── */
     .reveal {
       opacity: 0;
@@ -779,7 +844,7 @@
 
     <!-- Rocky illustration -->
     <div class="rocky-showcase reveal">
-      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fan illustration of Rocky, the five-limbed Eridian from Project Hail Mary">
+      <svg id="rocky-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fan illustration of Rocky, the five-limbed Eridian from Project Hail Mary">
         <title>Rocky — Eridian Fan Illustration</title>
         <defs>
           <radialGradient id="rk-body" cx="40%" cy="35%">
@@ -824,8 +889,8 @@
         <circle cx="250" cy="250" r="240" fill="url(#rk-aura)"/>
 
         <!-- Tonal communication rings -->
-        <circle cx="250" cy="250" r="175" stroke="#26c6da" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="11 9" fill="none"/>
-        <circle cx="250" cy="250" r="210" stroke="#26c6da" stroke-width="0.5" stroke-opacity="0.14" stroke-dasharray="6 14" fill="none"/>
+        <circle class="comm-ring" cx="250" cy="250" r="175" stroke="#26c6da" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="11 9" fill="none"/>
+        <circle class="comm-ring" cx="250" cy="250" r="210" stroke="#26c6da" stroke-width="0.5" stroke-opacity="0.14" stroke-dasharray="6 14" fill="none"/>
 
         <!-- Musical notes — Rocky speaks in tones -->
         <text x="72"  y="185" font-size="20" fill="#26c6da" fill-opacity="0.42" transform="rotate(-18,72,185)">♪</text>
@@ -992,6 +1057,9 @@
           <span class="rocky-tag">Ship engineer</span>
           <span class="rocky-tag">Best friend</span>
         </div>
+        <button id="rocky-voice-btn" class="rocky-play-btn" aria-label="Hear a synthesized approximation of Rocky's tonal language">
+          <span class="btn-icon">▶</span> Hear Rocky Speak
+        </button>
       </div>
     </div>
 
@@ -1279,6 +1347,113 @@
   );
 
   sections.forEach((s) => sectionObserver.observe(s));
+
+  /* ─── Rocky's Voice (Web Audio API synthesizer) ──────────── */
+  (function () {
+    const btn = document.getElementById('rocky-voice-btn');
+    const svg = document.getElementById('rocky-svg');
+    if (!btn || !svg) return;
+
+    let speaking = false;
+
+    // Spawn a floating musical note particle near the SVG
+    function spawnNote(parent) {
+      const notes = ['♪', '♫', '♩', '♬'];
+      const el = document.createElement('span');
+      el.className = 'rocky-note-particle';
+      el.textContent = notes[Math.floor(Math.random() * notes.length)];
+      el.style.left  = (20 + Math.random() * 60) + '%';
+      el.style.bottom = (10 + Math.random() * 40) + '%';
+      parent.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    // Play a single tone: frequency glide, duration, wave shape, volume
+    function tone(actx, dest, echo, f1, f2, t, dur, wave, vol) {
+      const osc  = actx.createOscillator();
+      const gain = actx.createGain();
+      const now  = actx.currentTime;
+
+      osc.type = wave;
+      osc.frequency.setValueAtTime(f1, now + t);
+      if (f2 !== f1) osc.frequency.linearRampToValueAtTime(f2, now + t + dur);
+
+      const atk = Math.min(0.03, dur * 0.12);
+      const rel = Math.min(0.09, dur * 0.22);
+      gain.gain.setValueAtTime(0, now + t);
+      gain.gain.linearRampToValueAtTime(vol, now + t + atk);
+      gain.gain.setValueAtTime(vol, now + t + dur - rel);
+      gain.gain.linearRampToValueAtTime(0, now + t + dur);
+
+      osc.connect(gain);
+      gain.connect(dest);
+      gain.connect(echo); // send wet to delay reverb
+      osc.start(now + t);
+      osc.stop(now + t + dur + 0.15);
+    }
+
+    btn.addEventListener('click', () => {
+      if (speaking) return;
+      speaking = true;
+
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { speaking = false; return; }
+
+      const actx   = new AC();
+      const master = actx.createGain();
+      // Simple feedback-delay reverb
+      const echo     = actx.createDelay(0.5);
+      const echoGain = actx.createGain();
+      echo.delayTime.value = 0.27;
+      echoGain.gain.value  = 0.16;
+      echo.connect(echoGain);
+      echoGain.connect(echo);      // feedback loop
+      echoGain.connect(master);    // wet out
+      master.gain.value = 0.68;
+      master.connect(actx.destination);
+
+      const T = (f1, f2, t, d, w, v) => tone(actx, master, echo, f1, f2, t, d, w, v);
+
+      // Rocky's greeting: rising hello → warm chord → quick ID tones
+      // → name chord → excited rapid burst → rising question glide
+      T(340, 680, 0.00, 0.17, 'sine',     0.22); // "Hello!" — rising chirp
+      T(440, 440, 0.28, 0.44, 'sine',     0.18); // sustained greeting chord
+      T(550, 550, 0.28, 0.44, 'triangle', 0.10);
+      T(330, 330, 0.30, 0.40, 'sine',     0.07);
+      T(520, 480, 0.86, 0.13, 'sine',     0.19); // "I"
+      T(390, 415, 1.04, 0.13, 'sine',     0.18); // "see"
+      T(635, 590, 1.22, 0.16, 'sine',     0.20); // "you"
+      T(560, 560, 1.56, 0.54, 'sine',     0.20); // "Rocky!" — name chord
+      T(420, 420, 1.56, 0.54, 'triangle', 0.12);
+      T(700, 700, 1.60, 0.48, 'sine',     0.08);
+      T(810, 755, 2.24, 0.09, 'sine',     0.15); // excited burst
+      T(655, 695, 2.36, 0.09, 'sine',     0.15);
+      T(560, 605, 2.48, 0.09, 'sine',     0.15);
+      T(480, 525, 2.60, 0.11, 'sine',     0.15);
+      T(310, 720, 2.86, 0.52, 'sine',     0.22); // "Question?" — rising glide
+      T(465, 465, 2.86, 0.52, 'triangle', 0.08);
+
+      // Visual: animate SVG rings + spawn note particles
+      btn.classList.add('playing');
+      btn.querySelector('.btn-icon').textContent = '◉';
+      btn.childNodes[2].textContent = ' Rocky is speaking…';
+      svg.classList.add('speaking');
+
+      const showcase = btn.closest('.rocky-showcase');
+      const noteInterval = setInterval(() => spawnNote(showcase), 420);
+
+      const DURATION = 3700;
+      setTimeout(() => {
+        clearInterval(noteInterval);
+        btn.classList.remove('playing');
+        btn.querySelector('.btn-icon').textContent = '▶';
+        btn.childNodes[2].textContent = ' Hear Rocky Speak';
+        svg.classList.remove('speaking');
+        speaking = false;
+        actx.close();
+      }, DURATION);
+    });
+  }());
 </script>
 </body>
 </html>
