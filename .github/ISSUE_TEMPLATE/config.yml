@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🌐 View the live site
+    url: https://highviewone.github.io/ProjectHailMary/
+    about: See the tribute site in action before opening an issue.
+  - name: 💬 Questions & discussion
+    url: https://github.com/HighviewOne/ProjectHailMary/discussions
+    about: For general questions or fan chatter, start a discussion instead.

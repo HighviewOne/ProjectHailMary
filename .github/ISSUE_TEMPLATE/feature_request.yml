@@ -1,0 +1,27 @@
+name: ✨ Feature / content idea
+description: Suggest a new section, enhancement, or content improvement
+title: "[Idea]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Ideas to make the tribute richer are very welcome!
+  - type: textarea
+    id: idea
+    attributes:
+      label: What's your idea?
+      description: Describe the feature, section, or content you'd like to see.
+      placeholder: Add a timeline section tracing the mission day by day...
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it improve the site?
+      placeholder: It would help readers who haven't finished the book follow along...
+  - type: checkboxes
+    id: spoilers
+    attributes:
+      label: Spoiler check
+      options:
+        - label: My suggestion avoids major plot spoilers (or clearly flags them)
