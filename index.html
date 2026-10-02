@@ -4,7 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Hail Mary — A Tribute</title>
+  <meta name="description" content="A fan tribute to Andy Weir's Project Hail Mary — the novel, the film, Rocky the Eridian, and the science behind the story." />
+  <meta name="theme-color" content="#060a10" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Project Hail Mary — A Tribute" />
+  <meta property="og:description" content="A fan tribute to Andy Weir's novel and the Amazon MGM film — featuring Rocky, his synthesized voice, and the science of Astrophage." />
+  <meta property="og:url" content="https://highviewone.github.io/ProjectHailMary/" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>document.documentElement.classList.add('js');</script>
   <style>
     /* ─── Reset & Base ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +46,20 @@
     }
 
     /* ─── Layout helpers ────────────────────────────────────── */
-    section { position: relative; z-index: 1; }
+    section { position: relative; z-index: 1; scroll-margin-top: 4rem; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
 
     .container {
       max-width: 1080px;
@@ -88,7 +109,17 @@
       transition: color .2s;
     }
 
-    nav a:hover { color: var(--blue); }
+    nav a:hover, nav a.active { color: var(--blue); }
+
+    @media (max-width: 720px) {
+      nav .inner {
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 0.6rem 1rem;
+      }
+      nav ul { gap: 1.1rem; }
+      nav a { font-size: 0.82rem; white-space: nowrap; }
+    }
 
     /* ─── Hero ──────────────────────────────────────────────── */
     #hero {
@@ -98,6 +129,7 @@
       justify-content: center;
       text-align: center;
       padding: 7rem 1.5rem 5rem;
+      overflow: hidden; /* keep the large pulse rings from widening the page */
     }
 
     .hero-inner { max-width: 780px; }
@@ -241,13 +273,13 @@
       background: linear-gradient(90deg, var(--gold), var(--teal));
     }
 
-    .book-cover .cover-icon {
+    .cover-icon {
       font-size: 3.5rem;
       margin-bottom: 1rem;
       display: block;
     }
 
-    .book-cover .cover-title {
+    .cover-title {
       font-size: 1.2rem;
       font-weight: 800;
       color: #fff;
@@ -255,14 +287,14 @@
       margin-bottom: 0.4rem;
     }
 
-    .book-cover .cover-author {
+    .cover-author {
       font-size: 0.8rem;
       color: var(--gold);
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
-    .book-cover .cover-year {
+    .cover-year {
       margin-top: 1.5rem;
       font-size: 0.7rem;
       color: var(--dim);
@@ -459,7 +491,7 @@
       padding: 6rem 0;
     }
 
-    .quote-carousel {
+    .quote-list {
       margin-top: 3rem;
       display: flex;
       flex-direction: column;
@@ -467,6 +499,7 @@
     }
 
     .quote-block {
+      margin: 0;
       background: var(--card);
       border-left: 3px solid var(--gold);
       border-radius: 0 1rem 1rem 0;
@@ -530,9 +563,13 @@
       background: radial-gradient(circle at 50% 30%, rgba(124,77,255,0.18) 0%, transparent 70%);
     }
 
-    .poster-card .cover-icon { position: relative; z-index: 1; }
-    .poster-card .cover-title { position: relative; z-index: 1; }
-    .poster-card .cover-year { position: relative; z-index: 1; }
+    .poster-card > * { position: relative; z-index: 1; }
+    .poster-card .cover-title { font-size: 1.1rem; }
+    .poster-card .cover-credit {
+      margin-top: 0.3rem;
+      font-size: 0.7rem;
+      color: var(--dim);
+    }
 
     .poster-card .streaming-badge {
       display: inline-block;
@@ -599,6 +636,9 @@
     footer p { color: var(--dim); font-size: 0.85rem; }
     footer a { color: var(--teal); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+    footer .footer-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    footer .footer-title { color: #fff; font-weight: 700; margin-bottom: 0.4rem; }
+    footer .footer-note { margin-top: 0.75rem; font-size: 0.78rem; }
 
     /* ─── Astrophage animation strip ───────────────────────── */
     .astrophage-bar {
@@ -659,7 +699,7 @@
       animation: ring-pulse 1.6s ease-in-out infinite;
     }
 
-    #rocky-svg.speaking .comm-ring:last-of-type {
+    #rocky-svg.speaking .comm-ring.outer {
       animation-delay: 0.55s;
     }
 
@@ -683,23 +723,34 @@
       100% { opacity: 0;   transform: translateY(-90px) scale(0.6) rotate(20deg); }
     }
 
-    /* ─── Fade-in on scroll ─────────────────────────────────── */
-    .reveal {
+    /* ─── Fade-in on scroll (only when JS is running) ───────── */
+    .js .reveal {
       opacity: 0;
       transform: translateY(28px);
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
 
-    .reveal.visible {
+    .js .reveal.visible {
       opacity: 1;
       transform: none;
+    }
+
+    /* ─── Reduced motion ────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .js .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
 
 <!-- Star field canvas -->
-<canvas id="starfield"></canvas>
+<canvas id="starfield" aria-hidden="true"></canvas>
 
 <!-- Navigation -->
 <nav>
@@ -715,11 +766,12 @@
   </div>
 </nav>
 
+<main>
 <!-- ── HERO ─────────────────────────────────────────────────── -->
 <section id="hero">
-  <div class="pulse-ring"></div>
-  <div class="pulse-ring"></div>
-  <div class="pulse-ring"></div>
+  <div class="pulse-ring" aria-hidden="true"></div>
+  <div class="pulse-ring" aria-hidden="true"></div>
+  <div class="pulse-ring" aria-hidden="true"></div>
 
   <div class="hero-inner">
     <span class="hero-eyebrow">A Tribute to</span>
@@ -746,10 +798,10 @@
     <div class="book-grid">
       <div class="book-cover-wrap reveal">
         <div class="book-cover">
-          <span class="cover-icon">🌌</span>
+          <span class="cover-icon" aria-hidden="true">🌌</span>
           <div class="cover-title">PROJECT<br>HAIL MARY</div>
           <div class="cover-author">Andy Weir</div>
-          <div class="cover-year">Ballantine Books · May 4, 2021<br>476 pages</div>
+          <div class="cover-year">Ballantine Books · May 4, 2021</div>
         </div>
       </div>
 
@@ -761,28 +813,28 @@
         </p>
         <div class="book-facts">
           <div class="fact">
-            <span class="fact-icon">🏆</span>
+            <span class="fact-icon" aria-hidden="true">🏆</span>
             <div>
               <strong>Awards</strong>
               <p>Hugo Award finalist; Goodreads Choice Award for Science Fiction (2021)</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">📚</span>
+            <span class="fact-icon" aria-hidden="true">📚</span>
             <div>
               <strong>Author</strong>
               <p>Andy Weir — also wrote <em>The Martian</em> (2011) and <em>Artemis</em> (2017)</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">🌍</span>
+            <span class="fact-icon" aria-hidden="true">🌍</span>
             <div>
               <strong>Setting</strong>
               <p>Earth, near-future solar system, and the Tau Ceti star system ~12 light-years away</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">⭐</span>
+            <span class="fact-icon" aria-hidden="true">⭐</span>
             <div>
               <strong>Reception</strong>
               <p>4.52 / 5 on Goodreads from over 1 million ratings — one of the highest-rated sci-fi novels of the decade</p>
@@ -811,7 +863,7 @@
       </div>
       <div class="timeline-item reveal">
         <h3>The Hail Mary Mission</h3>
-        <p>One star — <em>Tau Ceti</em>, 12 light-years away — shows no dimming. Humanity's last hope is to send a small crew there to discover why, then bring the answer back. The mission is a one-way trip for its crew.</p>
+        <p>One star — <em>Tau Ceti</em>, 12 light-years away — shows no dimming. Humanity's last hope is to send a small crew there to discover why and send the answer home aboard small unmanned probes. There isn't enough fuel to bring the crew back: it's a one-way trip.</p>
       </div>
       <div class="timeline-item reveal">
         <h3>A Man Wakes Up Alone</h3>
@@ -866,11 +918,6 @@
             <stop offset="0%" stop-color="#e8a840"/>
             <stop offset="100%" stop-color="#7a3a10"/>
           </radialGradient>
-          <radialGradient id="rk-sensor" cx="35%" cy="35%">
-            <stop offset="0%" stop-color="#40ead0"/>
-            <stop offset="50%" stop-color="#26c6da"/>
-            <stop offset="100%" stop-color="#008899"/>
-          </radialGradient>
           <radialGradient id="rk-aura" cx="50%" cy="50%">
             <stop offset="0%" stop-color="#26c6da" stop-opacity="0"/>
             <stop offset="60%" stop-color="#26c6da" stop-opacity="0.04"/>
@@ -879,10 +926,20 @@
           <filter id="rk-drop" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="1" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
           </filter>
-          <filter id="rk-sense-glow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="3" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
+          <!-- One limb, pointing up; rotated 5× around the body centre -->
+          <g id="rk-limb-shape">
+            <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
+            <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+            <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+            <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+            <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+            <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
+            <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
+            <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
+            <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
+            <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
+            <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
+          </g>
         </defs>
 
         <!-- Outer aura -->
@@ -890,7 +947,7 @@
 
         <!-- Tonal communication rings -->
         <circle class="comm-ring" cx="250" cy="250" r="175" stroke="#26c6da" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="11 9" fill="none"/>
-        <circle class="comm-ring" cx="250" cy="250" r="210" stroke="#26c6da" stroke-width="0.5" stroke-opacity="0.14" stroke-dasharray="6 14" fill="none"/>
+        <circle class="comm-ring outer" cx="250" cy="250" r="210" stroke="#26c6da" stroke-width="0.5" stroke-opacity="0.14" stroke-dasharray="6 14" fill="none"/>
 
         <!-- Musical notes — Rocky speaks in tones -->
         <text x="72"  y="185" font-size="20" fill="#26c6da" fill-opacity="0.42" transform="rotate(-18,72,185)">♪</text>
@@ -899,81 +956,12 @@
         <text x="122" y="415" font-size="18" fill="#26c6da" fill-opacity="0.38" transform="rotate(-12,122,415)">♪</text>
         <text x="413" y="150" font-size="12" fill="#26c6da" fill-opacity="0.25" transform="rotate(15,413,150)">♫</text>
 
-        <!-- ═══ LIMBS (behind body) — one template rotated 5× ═══ -->
-        <!-- Limb 0 — 0° (top) -->
-        <g transform="rotate(0,250,250)" filter="url(#rk-drop)">
-          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
-          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
-          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
-          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
-          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
-          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
-          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
-        </g>
-
-        <!-- Limb 1 — 72° -->
-        <g transform="rotate(72,250,250)" filter="url(#rk-drop)">
-          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
-          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
-          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
-          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
-          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
-          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
-          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
-        </g>
-
-        <!-- Limb 2 — 144° -->
-        <g transform="rotate(144,250,250)" filter="url(#rk-drop)">
-          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
-          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
-          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
-          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
-          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
-          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
-          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
-        </g>
-
-        <!-- Limb 3 — 216° -->
-        <g transform="rotate(216,250,250)" filter="url(#rk-drop)">
-          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
-          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
-          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
-          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
-          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
-          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
-          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
-        </g>
-
-        <!-- Limb 4 — 288° -->
-        <g transform="rotate(288,250,250)" filter="url(#rk-drop)">
-          <path d="M 237,180 C 234,163 236,143 245,119 L 248,109 Q 250,105 252,109 L 255,119 C 264,143 266,163 263,180 Z" fill="url(#rk-limb)"/>
-          <path d="M 249,176 C 248,160 248,140 249,118 L 250,110" stroke="#e8a845" stroke-width="2" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
-          <line x1="239" y1="168" x2="261" y2="168" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="241" y1="155" x2="259" y2="155" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="243" y1="142" x2="257" y2="142" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <line x1="245" y1="130" x2="255" y2="130" stroke="#5a2808" stroke-width="1.2" stroke-opacity="0.5"/>
-          <ellipse cx="245"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-32,245,101)"/>
-          <ellipse cx="247.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(-16,247.5,99.5)"/>
-          <ellipse cx="250"   cy="99"   rx="4" ry="9.5" fill="url(#rk-finger)"/>
-          <ellipse cx="252.5" cy="99.5" rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(16,252.5,99.5)"/>
-          <ellipse cx="255"   cy="101"  rx="4" ry="9.5" fill="url(#rk-finger)" transform="rotate(32,255,101)"/>
-        </g>
+        <!-- ═══ LIMBS (behind body) ═══ -->
+        <use href="#rk-limb-shape" transform="rotate(0,250,250)" filter="url(#rk-drop)"/>
+        <use href="#rk-limb-shape" transform="rotate(72,250,250)" filter="url(#rk-drop)"/>
+        <use href="#rk-limb-shape" transform="rotate(144,250,250)" filter="url(#rk-drop)"/>
+        <use href="#rk-limb-shape" transform="rotate(216,250,250)" filter="url(#rk-drop)"/>
+        <use href="#rk-limb-shape" transform="rotate(288,250,250)" filter="url(#rk-drop)"/>
 
         <!-- ═══ CENTRAL BODY (on top of limb bases) ═══ -->
         <circle cx="250" cy="250" r="74" fill="url(#rk-body)" filter="url(#rk-drop)"/>
@@ -996,39 +984,7 @@
         <!-- Surface specular sheen -->
         <ellipse cx="233" cy="228" rx="25" ry="19" fill="white" fill-opacity="0.07"/>
 
-        <!-- 5 Sensory organs — one per limb direction, r=40 from center -->
-        <!-- S0: 270° → (250, 210) -->
-        <g filter="url(#rk-sense-glow)">
-          <circle cx="250" cy="210" r="7.5" fill="#040c0f"/>
-          <circle cx="250" cy="210" r="5"   fill="url(#rk-sensor)"/>
-          <circle cx="248" cy="208" r="1.8" fill="white" fill-opacity="0.65"/>
-        </g>
-        <!-- S1: 342° → (288, 238) -->
-        <g filter="url(#rk-sense-glow)">
-          <circle cx="288" cy="238" r="7.5" fill="#040c0f"/>
-          <circle cx="288" cy="238" r="5"   fill="url(#rk-sensor)"/>
-          <circle cx="286" cy="236" r="1.8" fill="white" fill-opacity="0.65"/>
-        </g>
-        <!-- S2: 54° → (274, 282) -->
-        <g filter="url(#rk-sense-glow)">
-          <circle cx="274" cy="282" r="7.5" fill="#040c0f"/>
-          <circle cx="274" cy="282" r="5"   fill="url(#rk-sensor)"/>
-          <circle cx="272" cy="280" r="1.8" fill="white" fill-opacity="0.65"/>
-        </g>
-        <!-- S3: 126° → (226, 282) -->
-        <g filter="url(#rk-sense-glow)">
-          <circle cx="226" cy="282" r="7.5" fill="#040c0f"/>
-          <circle cx="226" cy="282" r="5"   fill="url(#rk-sensor)"/>
-          <circle cx="224" cy="280" r="1.8" fill="white" fill-opacity="0.65"/>
-        </g>
-        <!-- S4: 198° → (212, 238) -->
-        <g filter="url(#rk-sense-glow)">
-          <circle cx="212" cy="238" r="7.5" fill="#040c0f"/>
-          <circle cx="212" cy="238" r="5"   fill="url(#rk-sensor)"/>
-          <circle cx="210" cy="236" r="1.8" fill="white" fill-opacity="0.65"/>
-        </g>
-
-        <!-- Tone-producing organ at center -->
+        <!-- Eridians have no eyes; Rocky senses by sound and "speaks" through a vent on his carapace -->
         <ellipse cx="250" cy="256" rx="13" ry="8" fill="#3a1a06"/>
         <ellipse cx="250" cy="256" rx="9"  ry="5" fill="#18080a"/>
         <!-- Sound wave -->
@@ -1039,9 +995,9 @@
         <div class="rocky-label">Fan Illustration</div>
         <h3>Meet Rocky</h3>
         <p>
-          An Eridian engineer from a world twice Earth's gravity, Rocky breathes
-          ammonium, sees with five teal-glowing sensory organs, and communicates
-          through musical tones produced by a central organ on his carapace.
+          An Eridian engineer from a world with twice Earth's gravity, Rocky breathes
+          high-pressure ammonia and has no eyes at all — he perceives the world
+          through sound, and speaks in musical chords.
         </p>
         <p>
           Despite every biological difference imaginable, Rocky's warmth, humor,
@@ -1051,21 +1007,23 @@
         </p>
         <div>
           <span class="rocky-tag">5-Limbed</span>
-          <span class="rocky-tag">Ammonium breather</span>
+          <span class="rocky-tag">Ammonia breather</span>
+          <span class="rocky-tag">Senses by sound</span>
           <span class="rocky-tag">Tonal language</span>
           <span class="rocky-tag">From Erid</span>
           <span class="rocky-tag">Ship engineer</span>
           <span class="rocky-tag">Best friend</span>
         </div>
-        <button id="rocky-voice-btn" class="rocky-play-btn" aria-label="Hear a synthesized approximation of Rocky's tonal language">
-          <span class="btn-icon">▶</span> Hear Rocky Speak
+        <button id="rocky-voice-btn" class="rocky-play-btn" type="button">
+          <span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-label">Hear Rocky Speak</span>
         </button>
+        <p class="sr-only" id="rocky-voice-status" aria-live="polite"></p>
       </div>
     </div>
 
     <div class="char-grid">
       <div class="char-card reveal">
-        <div class="char-avatar human">🧑‍🔬</div>
+        <div class="char-avatar human" aria-hidden="true">🧑‍🔬</div>
         <div class="char-name">Ryland Grace</div>
         <div class="char-role">Protagonist · Astronaut & Scientist</div>
         <p class="char-desc">
@@ -1077,11 +1035,11 @@
       </div>
 
       <div class="char-card reveal">
-        <div class="char-avatar alien">🪐</div>
+        <div class="char-avatar alien" aria-hidden="true">🪐</div>
         <div class="char-name">Rocky</div>
         <div class="char-role">Eridian · Engineer & First Contact</div>
         <p class="char-desc">
-          An ammonium-breathing, five-limbed creature from a high-gravity world who
+          An ammonia-breathing, five-limbed creature from a high-gravity world who
           communicates through musical tones. Rocky is one of science fiction's most
           beloved alien characters — curious, loyal, and every bit as funny as his
           human counterpart.
@@ -1089,9 +1047,9 @@
       </div>
 
       <div class="char-card reveal">
-        <div class="char-avatar human">👩‍⚕️</div>
+        <div class="char-avatar human" aria-hidden="true">👩‍⚕️</div>
         <div class="char-name">Eva Stratt</div>
-        <div class="char-role">Mission Commander · Earth</div>
+        <div class="char-role">Head of Project Hail Mary · Earth</div>
         <p class="char-desc">
           The cold, pragmatic European official granted unprecedented authority over
           every nation on Earth. She makes the ruthless decisions no one else will.
@@ -1100,7 +1058,7 @@
       </div>
 
       <div class="char-card reveal">
-        <div class="char-avatar alien">🌟</div>
+        <div class="char-avatar alien" aria-hidden="true">🌟</div>
         <div class="char-name">Astrophage</div>
         <div class="char-role">Organism · The Existential Threat</div>
         <p class="char-desc">
@@ -1119,23 +1077,23 @@
     <p class="section-label reveal">Memorable Lines</p>
     <h2 class="section-title reveal">Words from the Stars</h2>
 
-    <div class="quote-carousel">
-      <div class="quote-block reveal">
-        <p class="quote-text">"I am the last astronaut. The last hope of humanity. And I have absolutely no idea what I'm doing."</p>
-        <span class="quote-attr">— Ryland Grace</span>
-      </div>
-      <div class="quote-block reveal">
-        <p class="quote-text">"If the human race is going to be done in by an organism with a two-carbon-atom metabolism, we have no business being the dominant species on this planet."</p>
-        <span class="quote-attr">— Ryland Grace</span>
-      </div>
-      <div class="quote-block reveal">
-        <p class="quote-text">"Science is my language. I speak it fluently, but I didn't know I was bilingual until Rocky showed me."</p>
-        <span class="quote-attr">— Ryland Grace</span>
-      </div>
-      <div class="quote-block reveal">
-        <p class="quote-text">"You save world. I save world. Maybe we both get good sleep after."</p>
-        <span class="quote-attr">— Rocky (translated)</span>
-      </div>
+    <div class="quote-list">
+      <figure class="quote-block reveal">
+        <blockquote class="quote-text"><p>&ldquo;Human beings have a remarkable ability to accept the abnormal and make it normal.&rdquo;</p></blockquote>
+        <figcaption class="quote-attr">— Ryland Grace</figcaption>
+      </figure>
+      <figure class="quote-block reveal">
+        <blockquote class="quote-text"><p>&ldquo;Fist my bump.&rdquo;</p></blockquote>
+        <figcaption class="quote-attr">— Rocky</figcaption>
+      </figure>
+      <figure class="quote-block reveal">
+        <blockquote class="quote-text"><p>&ldquo;When stupid ideas work, they become genius ideas.&rdquo;</p></blockquote>
+        <figcaption class="quote-attr">— Ryland Grace</figcaption>
+      </figure>
+      <figure class="quote-block reveal">
+        <blockquote class="quote-text"><p>&ldquo;Good. Proud. I am scary space monster. You are leaky space blob.&rdquo;</p></blockquote>
+        <figcaption class="quote-attr">— Rocky</figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -1144,48 +1102,48 @@
 <section id="movie">
   <div class="container">
     <p class="section-label reveal">The Film Adaptation</p>
-    <h2 class="section-title reveal">Coming to the Big Screen</h2>
+    <h2 class="section-title reveal">On the Big Screen</h2>
     <p class="section-lead reveal">
-      Amazon MGM Studios is bringing the story to life with an all-star cast and
-      production team dedicated to honoring Andy Weir's vision.
+      Amazon MGM Studios brought the story to theaters on March 20, 2026, with an
+      all-star cast and a production team dedicated to honoring Andy Weir's vision.
     </p>
 
     <div class="movie-grid">
       <div class="reveal">
         <div class="movie-details">
           <div class="fact">
-            <span class="fact-icon">🎬</span>
+            <span class="fact-icon" aria-hidden="true">🎬</span>
             <div>
               <strong>Director</strong>
               <p>Phil Lord &amp; Christopher Miller (<em>The Lego Movie</em>, <em>Spider-Man: Into the Spider-Verse</em>)</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">⭐</span>
+            <span class="fact-icon" aria-hidden="true">⭐</span>
             <div>
               <strong>Starring</strong>
-              <p>Ryan Gosling as Ryland Grace — a casting choice celebrated by fans worldwide</p>
+              <p>Ryan Gosling as Ryland Grace and Sandra Hüller as Eva Stratt, with Lionel Boyce, Ken Leung and Milana Vayntrub</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">🏢</span>
+            <span class="fact-icon" aria-hidden="true">🏢</span>
             <div>
               <strong>Studio</strong>
-              <p>Amazon MGM Studios, produced by Drew Goddard</p>
+              <p>Amazon MGM Studios; produced by Amy Pascal, Phil Lord, Christopher Miller and Aditya Sood</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">🎭</span>
+            <span class="fact-icon" aria-hidden="true">🎭</span>
             <div>
               <strong>Screenplay</strong>
               <p>Drew Goddard, working closely with Andy Weir to preserve the novel's scientific heart and emotional core</p>
             </div>
           </div>
           <div class="fact">
-            <span class="fact-icon">🌠</span>
+            <span class="fact-icon" aria-hidden="true">🌠</span>
             <div>
               <strong>Production Note</strong>
-              <p>Filmmakers face the beloved challenge of bringing Rocky to life — one of sci-fi's most cherished alien characters — with groundbreaking visual effects</p>
+              <p>The filmmakers took on the beloved challenge of bringing Rocky — one of sci-fi's most cherished alien characters — to the screen</p>
             </div>
           </div>
         </div>
@@ -1193,11 +1151,11 @@
 
       <div class="movie-poster reveal">
         <div class="poster-card">
-          <span class="cover-icon" style="font-size:3.5rem; display:block; margin-bottom:1rem; position:relative; z-index:1;">🎥</span>
-          <div class="cover-title" style="position:relative;z-index:1;font-size:1.1rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:0.4rem;">PROJECT<br>HAIL MARY</div>
-          <div style="font-size:0.8rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;position:relative;z-index:1;">Ryan Gosling</div>
-          <div style="margin-top:0.3rem;font-size:0.7rem;color:var(--dim);position:relative;z-index:1;">Lord &amp; Miller · Amazon MGM</div>
-          <span class="streaming-badge">Amazon Prime Video</span>
+          <span class="cover-icon" aria-hidden="true">🎥</span>
+          <div class="cover-title">PROJECT<br>HAIL MARY</div>
+          <div class="cover-author">Ryan Gosling</div>
+          <div class="cover-credit">Lord &amp; Miller · Amazon MGM</div>
+          <span class="streaming-badge">In theaters March 20, 2026</span>
         </div>
       </div>
     </div>
@@ -1216,37 +1174,37 @@
 
     <div class="science-box reveal">
       <div class="sci-item">
-        <div class="sci-icon">☀️</div>
+        <div class="sci-icon" aria-hidden="true">☀️</div>
         <div class="sci-title">Distance to Tau Ceti</div>
         <div class="sci-value">11.9 ly</div>
-        <div class="sci-desc">A real star in Cetus, host to confirmed exoplanets</div>
+        <div class="sci-desc">A real Sun-like star in Cetus, with several candidate exoplanets</div>
       </div>
       <div class="sci-item">
-        <div class="sci-icon">⚡</div>
-        <div class="sci-title">Astrophage Fuel</div>
-        <div class="sci-value">0.14c</div>
-        <div class="sci-desc">Ship velocity — 14% the speed of light using Astrophage drive</div>
+        <div class="sci-icon" aria-hidden="true">⚡</div>
+        <div class="sci-title">Astrophage Drive</div>
+        <div class="sci-value">1.5 g</div>
+        <div class="sci-desc">Constant thrust, pushing the Hail Mary to within a whisker of light speed</div>
       </div>
       <div class="sci-item">
-        <div class="sci-icon">🔬</div>
+        <div class="sci-icon" aria-hidden="true">🔬</div>
         <div class="sci-title">Astrophage Size</div>
         <div class="sci-value">~10 µm</div>
         <div class="sci-desc">Microscopic organism, roughly the size of a human cell</div>
       </div>
       <div class="sci-item">
-        <div class="sci-icon">🧬</div>
+        <div class="sci-icon" aria-hidden="true">🧬</div>
         <div class="sci-title">Travel Time</div>
-        <div class="sci-value">~4 yrs</div>
-        <div class="sci-desc">One-way journey at 0.14c, accounting for acceleration/deceleration</div>
+        <div class="sci-value">~3.9 yrs</div>
+        <div class="sci-desc">Experienced aboard the ship — about 13 years pass on Earth, thanks to time dilation</div>
       </div>
       <div class="sci-item">
-        <div class="sci-icon">🌡️</div>
+        <div class="sci-icon" aria-hidden="true">🌡️</div>
         <div class="sci-title">Eridian Atmosphere</div>
-        <div class="sci-value">NH₃ + H₂</div>
-        <div class="sci-desc">Rocky breathes ammonium-rich gas at high pressure — toxic to humans</div>
+        <div class="sci-value">NH₃</div>
+        <div class="sci-desc">Rocky breathes ammonia at roughly 29 atmospheres of pressure — toxic to humans</div>
       </div>
       <div class="sci-item">
-        <div class="sci-icon">📡</div>
+        <div class="sci-icon" aria-hidden="true">📡</div>
         <div class="sci-title">Communication Method</div>
         <div class="sci-value">Tones</div>
         <div class="sci-desc">Ryland and Rocky develop a shared language built on musical frequencies</div>
@@ -1255,14 +1213,16 @@
   </div>
 </section>
 
+</main>
+
 <!-- ── FOOTER ────────────────────────────────────────────────── -->
-<div class="astrophage-bar"></div>
+<div class="astrophage-bar" aria-hidden="true"></div>
 <footer>
   <div class="container">
-    <p style="font-size:1.5rem; margin-bottom:0.75rem;">🌌</p>
-    <p style="color:#fff; font-weight:700; margin-bottom:0.4rem;">Project Hail Mary</p>
-    <p>A fan tribute to the novel by <a href="#">Andy Weir</a> and the Amazon MGM Studios film.</p>
-    <p style="margin-top:0.75rem; font-size:0.78rem;">
+    <p class="footer-icon" aria-hidden="true">🌌</p>
+    <p class="footer-title">Project Hail Mary</p>
+    <p>A fan tribute to the novel by <a href="https://www.andyweirauthor.com/" rel="noopener">Andy Weir</a> and the Amazon MGM Studios film.</p>
+    <p class="footer-note">
       All character names, story elements, and intellectual property belong to their respective owners.
       This is an unofficial, non-commercial tribute created out of love for the story.
     </p>
@@ -1270,45 +1230,55 @@
 </footer>
 
 <script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   /* ─── Star field ─────────────────────────────────────── */
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
   let stars = [];
 
   function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = window.innerWidth  * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
+  // Positions are fractions of the viewport, so a resize (e.g. the mobile
+  // address bar hiding) stretches the sky instead of reshuffling it.
   function initStars(n = 320) {
     stars = Array.from({ length: n }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
+      x: Math.random(),
+      y: Math.random(),
       r: Math.random() * 1.4 + 0.2,
       a: Math.random(),
-      speed: Math.random() * 0.004 + 0.001,
+      speed: Math.random() * 2.5 + 0.5, // twinkle rate, radians per second
       phase: Math.random() * Math.PI * 2,
     }));
   }
 
   function drawStars(t) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const w = window.innerWidth, h = window.innerHeight;
+    ctx.clearRect(0, 0, w, h);
     for (const s of stars) {
       const alpha = s.a * (0.6 + 0.4 * Math.sin(t * s.speed + s.phase));
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(255,255,255,${alpha})`;
       ctx.fill();
     }
   }
 
-  let raf;
+  // With reduced motion the loop draws one static frame and stops.
   function loop(t) {
     drawStars(t / 1000);
-    raf = requestAnimationFrame(loop);
+    if (!reduceMotion.matches) requestAnimationFrame(loop);
   }
 
-  window.addEventListener('resize', () => { resize(); initStars(); });
+  window.addEventListener('resize', () => { resize(); drawStars(performance.now() / 1000); });
+  reduceMotion.addEventListener('change', () => requestAnimationFrame(loop));
   resize();
   initStars();
   requestAnimationFrame(loop);
@@ -1330,20 +1300,21 @@
 
   /* ─── Nav active link highlight ──────────────────────── */
   const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const navLinks = document.querySelectorAll('nav ul a[href^="#"]');
 
+  // A section counts as current when it crosses the middle of the viewport,
+  // which works no matter how tall the section is.
   const sectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
           navLinks.forEach((a) => {
-            a.style.color = a.getAttribute('href') === `#${e.target.id}`
-              ? 'var(--blue)' : '';
+            a.classList.toggle('active', a.getAttribute('href') === `#${e.target.id}`);
           });
         }
       });
     },
-    { threshold: 0.4 }
+    { rootMargin: '-50% 0px -50% 0px' }
   );
 
   sections.forEach((s) => sectionObserver.observe(s));
@@ -1352,6 +1323,8 @@
   (function () {
     const btn = document.getElementById('rocky-voice-btn');
     const svg = document.getElementById('rocky-svg');
+    const label  = btn && btn.querySelector('.btn-label');
+    const status = document.getElementById('rocky-voice-status');
     if (!btn || !svg) return;
 
     let speaking = false;
@@ -1436,18 +1409,22 @@
       // Visual: animate SVG rings + spawn note particles
       btn.classList.add('playing');
       btn.querySelector('.btn-icon').textContent = '◉';
-      btn.childNodes[2].textContent = ' Rocky is speaking…';
+      label.textContent = 'Rocky is speaking…';
+      status.textContent = 'Playing Rocky\'s greeting.';
       svg.classList.add('speaking');
 
       const showcase = btn.closest('.rocky-showcase');
-      const noteInterval = setInterval(() => spawnNote(showcase), 420);
+      const noteInterval = reduceMotion.matches
+        ? null
+        : setInterval(() => spawnNote(showcase), 420);
 
       const DURATION = 3700;
       setTimeout(() => {
         clearInterval(noteInterval);
         btn.classList.remove('playing');
         btn.querySelector('.btn-icon').textContent = '▶';
-        btn.childNodes[2].textContent = ' Hear Rocky Speak';
+        label.textContent = 'Hear Rocky Speak';
+        status.textContent = '';
         svg.classList.remove('speaking');
         speaking = false;
         actx.close();
