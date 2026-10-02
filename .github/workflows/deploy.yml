@@ -6,6 +6,7 @@ on:
     # Docs and repo templates don't change the site, so skip redeploying for them
     paths-ignore:
       - 'README.md'
+      - 'CLAUDE.md'
       - 'LICENSE'
       - '.github/banner.svg'
       - '.github/ISSUE_TEMPLATE/**'

@@ -80,6 +80,7 @@ ProjectHailMary/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/
 │       └── deploy.yml      # GitHub Pages deployment
+├── CLAUDE.md               # Notes for AI assistants: canon facts & conventions
 ├── LICENSE
 └── README.md
 ```
@@ -88,6 +89,10 @@ ProjectHailMary/
 
 Contributions and corrections are welcome — see [issue and PR templates](.github/) when opening one.
 Since the whole site lives in `index.html`, keep changes focused and preview them locally before submitting.
+
+**Accuracy matters.** Please cite a source for new facts about the book, film or science, and
+only add quotes that appear in the novel or film. [`CLAUDE.md`](CLAUDE.md) lists the canon
+details that are easy to get wrong (for example, Rocky has no eyes).
 
 ## License
 
