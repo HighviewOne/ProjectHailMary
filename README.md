@@ -4,7 +4,7 @@
 
 # Project Hail Mary — A Tribute
 
-*A single-page fan tribute to Andy Weir's bestselling novel and the upcoming Amazon MGM film.*
+*A single-page fan tribute to Andy Weir's bestselling novel and the 2026 Amazon MGM film.*
 
 [![Deploy to GitHub Pages](https://github.com/HighviewOne/ProjectHailMary/actions/workflows/deploy.yml/badge.svg)](https://github.com/HighviewOne/ProjectHailMary/actions/workflows/deploy.yml)
 [![Live Site](https://img.shields.io/badge/live-demo-26c6da?logo=github)](https://highviewone.github.io/ProjectHailMary/)
@@ -20,7 +20,7 @@
 
 ## About
 
-A self-contained, single-page tribute site celebrating *Project Hail Mary* — the novel and its forthcoming film adaptation. It walks visitors through the book, its (spoiler-light) premise, characters like the unforgettable Rocky, memorable quotes, the upcoming movie, and the real science woven through the story.
+A self-contained, single-page tribute site celebrating *Project Hail Mary* — the novel and its 2026 film adaptation. It walks visitors through the book, its (spoiler-light) premise, characters like the unforgettable Rocky, memorable quotes, the film, and the real science woven through the story.
 
 Everything ships in a single `index.html`: hand-written CSS, an animated star field, a hand-drawn SVG illustration of Rocky, and Rocky's synthesized tonal "voice" rendered live in the browser via the Web Audio API. No frameworks, no build step, no dependencies.
 
@@ -33,7 +33,7 @@ Everything ships in a single `index.html`: hand-written CSS, an animated star fi
 - 🔊 **Rocky's voice** — synthesized tonal chords via the Web Audio API
 - 📖 **Story sections** — the novel, premise, characters, quotes, film, and science
 - 🎬 **Film details** — cast and crew of the Amazon MGM adaptation
-- 📱 **Responsive & smooth** — mobile-friendly layout with scroll-reveal animations
+- 📱 **Responsive & accessible** — mobile-friendly layout, scroll-reveal animations, and respect for reduced-motion settings
 - ⭐ **Custom SVG favicon** — a gold star inside a teal ring
 
 ## Tech Stack
@@ -57,10 +57,7 @@ No build step is required — it's plain static files.
 git clone https://github.com/HighviewOne/ProjectHailMary.git
 cd ProjectHailMary
 
-# Open directly...
-open index.html
-
-# ...or serve locally (recommended, so the Web Audio API behaves)
+# Open index.html directly in your browser, or serve it locally:
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
@@ -79,8 +76,12 @@ ProjectHailMary/
 ├── favicon.svg             # Gold-star-and-teal-ring favicon
 ├── .github/
 │   ├── banner.svg          # README banner
+│   ├── ISSUE_TEMPLATE/     # Bug report & idea forms
+│   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/
-│       └── deploy.yml       # GitHub Pages deployment
+│       └── deploy.yml      # GitHub Pages deployment
+├── CLAUDE.md               # Notes for AI assistants: canon facts & conventions
+├── LICENSE
 └── README.md
 ```
 
@@ -88,6 +89,10 @@ ProjectHailMary/
 
 Contributions and corrections are welcome — see [issue and PR templates](.github/) when opening one.
 Since the whole site lives in `index.html`, keep changes focused and preview them locally before submitting.
+
+**Accuracy matters.** Please cite a source for new facts about the book, film or science, and
+only add quotes that appear in the novel or film. [`CLAUDE.md`](CLAUDE.md) lists the canon
+details that are easy to get wrong (for example, Rocky has no eyes).
 
 ## License
 
