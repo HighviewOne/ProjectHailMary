@@ -21,7 +21,7 @@ source. Never invent quotes.
 - The Hail Mary accelerates at **1.5 g**. The trip takes ~3.9 years aboard and ~13 years on Earth.
 - Eva Stratt **heads** Project Hail Mary on Earth; she is not the mission commander.
 - Tau Ceti has **candidate** exoplanets, not confirmed ones.
-- The film opened in theaters on **March 20, 2026**. It was directed by Phil Lord & Christopher
+- The film opened in theaters on **March 20, 2026** and has streamed on Prime Video since **July 3, 2026**. It was directed by Phil Lord & Christopher
   Miller, stars Ryan Gosling and Sandra Hüller (Stratt), and has a screenplay by Drew Goddard.
 - Quotes in the Quotes section are verified against the book (see the Goodreads quotes page).
 - Keep the plot spoiler-light. Don't reveal the ending.
